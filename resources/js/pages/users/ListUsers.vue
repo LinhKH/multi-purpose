@@ -1,7 +1,29 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 
 const users = ref([]);
+const searchQuery = ref(null);
+
+const form = reactive({
+    name: '',
+    email: '',
+    password: '',
+});
+
+const addUser = () => {
+    $('#userFormModal').modal('show');
+};
+
+const createUser = () => {
+    axios.post('/api/users', form)
+        .then((response) => {
+            users.value.unshift(response.data);
+            $('#userFormModal').modal('hide');
+            form.name = '';
+            form.email = '';
+            form.password = '';
+        });
+};
 
 const getUsers = () => {
 	axios.get("/api/users").then((res) => {
@@ -36,7 +58,7 @@ onMounted(() => {
 		<div class="container-fluid">
 			<div class="d-flex justify-content-between">
 				<div class="d-flex">
-					<button type="button" class="mb-2 btn btn-primary">
+					<button @click="addUser" type="button" class="mb-2 btn btn-primary">
 						<i class="fa fa-plus-circle mr-1"></i>
 						Add New User
 					</button>
@@ -85,86 +107,43 @@ onMounted(() => {
 					</div>
 				</div>
 			</div>
-			<Bootstrap4Pagination
-				:data="users"
-				@pagination-change-page="getUsers"
-			/>
+
 		</div>
 	</div>
 
-	<div
-		class="modal fade"
-		id="userFormModal"
-		data-backdrop="static"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="staticBackdropLabel"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="staticBackdropLabel">
-						<span v-if="editing">Edit User</span>
-						<span v-else>Add New User</span>
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div
-		class="modal fade"
-		id="deleteUserModal"
-		data-backdrop="static"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="staticBackdropLabel"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="staticBackdropLabel">
-						<span>Delete User</span>
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<h5>Are you sure you want to delete this user ?</h5>
-				</div>
-				<div class="modal-footer">
-					<button
-						type="button"
-						class="btn btn-secondary"
-						data-dismiss="modal"
-					>
-						Cancel
-					</button>
-					<button
-						@click.prevent="deleteUser"
-						type="button"
-						class="btn btn-primary"
-					>
-						Delete User
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="modal fade" id="userFormModal" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                        <span>Add New User</span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form autocomplete="off" @submit.prevent="createUser">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input v-model="form.name" type="text" class="form-control" id="name" placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input v-model="form.email" type="text" class="form-control" id="email" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Password</label>
+                            <input v-model="form.password" type="password" class="form-control" id="password" placeholder="Enter password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </template>
