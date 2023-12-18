@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useToastr } from "../../toastr";
+import moment from 'moment';
 
 const toastr = useToastr();
 const users = ref([]);
@@ -175,7 +176,7 @@ onMounted(() => {
 									<td>{{ index + 1 }}</td>
 									<td>{{ user.name }}</td>
 									<td>{{ user.email }}</td>
-									<td>{{ user.formated_created_at }}</td>
+									<td>{{ moment(user.created_at).format('YYYY-MM-DD') }}</td>
 									<td>John Doe</td>
 									<td>
                                         <a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a>
