@@ -8,6 +8,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('csrf', function () {
+    return csrf_token();
+});
+
 // Route::get('/admin/dashboard', function() {
 //     return view('dashboard');
 // });
@@ -15,5 +19,6 @@ Route::get('/', function () {
 Route::get('/api/users', [UserController::class, 'index']);
 Route::post('/api/users', [UserController::class, 'store']);
 Route::put('/api/users/{user}', [UserController::class, 'update']);
+Route::delete('/api/users/{user}', [UserController::class, 'destory']);
 
 Route::get('{view}', ApplicationController::class)->where('view', '(.*)');
