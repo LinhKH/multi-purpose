@@ -236,7 +236,7 @@ onMounted(() => {
 							</tbody>
 							<tbody v-else>
 								<tr>
-									<td colspan="6" class="text-center">
+									<td colspan="7" class="text-center">
 										No results found...
 									</td>
 								</tr>
