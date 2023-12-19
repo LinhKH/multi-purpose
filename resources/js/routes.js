@@ -1,6 +1,6 @@
 import Dashboard from './components/Dashboard.vue';
 import ListAppointments from './pages/appointments/ListAppointments.vue';
-import ListUsers from './pages/users/ListUsers.vue';
+import UsersList from './pages/users/UsersList.vue';
 import UpdateSetting from './pages/settings/UpdateSetting.vue';
 import UpdateProfile from './pages/profile/UpdateProfile.vue';
 
@@ -19,7 +19,7 @@ export default [
     {
         path: '/admin/users',
         name: 'admin.users',
-        component: ListUsers
+        component: UsersList
     },
     {
         path: '/admin/settings',
