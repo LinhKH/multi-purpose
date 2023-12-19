@@ -1,16 +1,21 @@
 <script setup >
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { formatDate } from "../../helper";
 import { useToastr } from "../../toastr";
 const toastr = useToastr();
 
 const userIdBeingDeleted = ref();
 
-defineProps({
+const props = defineProps({
 	user: Object,
 	index: Number,
+	selectedUsers: Array,
 });
-const emit = defineEmits(["confirmUserDeletion", "editUser"]);
+const emit = defineEmits([
+	"confirmUserDeletion",
+	"editUser",
+	"toggleSelection",
+]);
 
 const roles = ref([
 	{
@@ -32,16 +37,30 @@ const changeRole = (user, role) => {
 			toastr.success("Role changed successfully!");
 		});
 };
+
+const userSelected = computed(() => {
+	return props.selectedUsers.includes(props.user.id);
+});
 </script>
 
 <template>
 	<tr>
+		<td>
+			<input
+				type="checkbox"
+				:checked="userSelected"
+				@change="$emit('toggleSelection', props.user)"
+			/>
+		</td>
 		<td>{{ index + 1 }}</td>
 		<td>{{ user.name }}</td>
 		<td>{{ user.email }}</td>
 		<td>{{ formatDate(user.created_at) }}</td>
 		<td>
-			<select class="form-control" @change="changeRole(user, $event.target.value)">
+			<select
+				class="form-control"
+				@change="changeRole(user, $event.target.value)"
+			>
 				<option
 					v-for="role in roles"
 					:key="role"

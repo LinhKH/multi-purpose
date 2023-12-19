@@ -66,7 +66,6 @@ const updateUser = (values, { setErrors }) => {
 };
 
 const handleSubmit = (values, actions) => {
-	console.log(actions);
 	if (editing.value) {
 		updateUser(values, actions);
 	} else {
@@ -119,7 +118,43 @@ watch(searchQuery, debounce(() => {
     search()
 }, 300));
 
+const selectedUsers = ref([]);
+const toggleSelection = (user) => {
+    const index = selectedUsers.value.indexOf(user.id);
+    if(index === -1) {
+        selectedUsers.value.push(user.id);
+    } else {
+        selectedUsers.value.splice(index,1);
+    }
+    selectAll.value = (selectedUsers.value.length != users.value.data.length) ? false : true;
+};
+
+const selectAll = ref(false);
+const selectAllUser = () => {
+    if(selectAll.value) {
+        selectedUsers.value = users.value.data.map(user => user.id);
+    } else {
+        selectedUsers.value= [];
+    }
+};
+
+const bulkDelete = () => {
+    axios.delete('/api/users', {
+        data: {
+            ids: selectedUsers.value
+        }
+    })
+    .then(response => {
+        users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id));
+        selectedUsers.value = [];
+        selectAll.value = false;
+        toastr.success(response.data.message);
+    });
+};
+
 const getUsers = (page = 1) => {
+    selectedUsers.value= [];
+    selectAll.value = false;
 	axios.get(`/api/users?page=${page}`).then((res) => {
 		users.value = res.data;
 	});
@@ -160,12 +195,12 @@ onMounted(() => {
 						<i class="fa fa-plus-circle mr-1"></i>
 						Add New User
 					</button>
-					<div>
-						<button type="button" class="ml-2 mb-2 btn btn-danger">
+					<div v-if="selectedUsers.length > 0">
+						<button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger">
 							<i class="fa fa-trash mr-1"></i>
 							Delete Selected
 						</button>
-						<span class="ml-2">Selected users</span>
+						<span class="ml-2">Selected {{ selectedUsers.length }} users</span>
 					</div>
 				</div>
 				<div>
@@ -178,6 +213,7 @@ onMounted(() => {
 						<table class="table table-hover text-nowrap">
 							<thead>
 								<tr>
+									<th><input type="checkbox" v-model="selectAll" @change="selectAllUser"/></th>
 									<th>ID</th>
 									<th>Name</th>
 									<th>Email</th>
@@ -194,7 +230,8 @@ onMounted(() => {
 									:index="index"
 									@confirm-user-deletion="confirmUserDeletion"
                                     @edit-user="editUser"
-
+                                    @toggle-selection="toggleSelection"
+                                    :selected-users="selectedUsers"
 								/>
 							</tbody>
 							<tbody v-else>

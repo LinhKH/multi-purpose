@@ -54,6 +54,13 @@ class UserController extends Controller
         return response()->noContent();
     }
 
+    public function bulkDelete()
+    {
+        User::whereIn('id', request('ids'))->delete();
+
+        return response()->json(['message' => 'Users deleted successfully!']);
+    }
+
     public function changeRole(User $user)
     {
         $user->update([

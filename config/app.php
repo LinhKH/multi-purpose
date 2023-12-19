@@ -71,7 +71,7 @@ return [
 
     'timezone' => 'UTC',
     'date_format' => 'd-m-Y',
-    'pagination_limit' => 2,
+    'pagination_limit' => 4,
 
     /*
     |--------------------------------------------------------------------------
