@@ -1,8 +1,20 @@
 <script setup>
-import { ref } from "vue";
-
+import { onMounted, ref } from "vue";
 
 const appointmentStatus = ref([]);
+
+const appointments = ref([]);
+const getAppointments = () => {
+
+	axios
+		.get("/api/appointments")
+		.then((response) => {
+			appointments.value = response.data;
+		});
+};
+onMounted(() => {
+    getAppointments();
+});
 
 </script>
 
@@ -29,35 +41,28 @@ const appointmentStatus = ref([]);
 				<div class="col-lg-12">
 					<div class="d-flex justify-content-between mb-2">
 						<div>
-								<button class="btn btn-primary">
-									<i class="fa fa-plus-circle mr-1"></i> Add
-									New Appointment
-								</button>
-
+							<button class="btn btn-primary">
+								<i class="fa fa-plus-circle mr-1"></i> Add New
+								Appointment
+							</button>
 						</div>
 						<div class="btn-group">
 							<button
 								@click="getAppointments()"
 								type="button"
-								class="btn"
-								:class="[
-									typeof selectedStatus === 'undefined'
-										? 'btn-secondary'
-										: 'btn-default',
-								]"
+								class="btn btn-secondary"
+
 							>
 								<span class="mr-1">All</span>
-								<span class="badge badge-pill badge-info">{{
-									appointmentsCount
-								}}</span>
+								<span class="badge badge-pill badge-info">appointmentsCount</span>
 							</button>
 
 							<button
-								v-for="status in appointmentStatus" :key="status"
+								v-for="status in appointmentStatus"
+								:key="status"
 								@click="getAppointments(status.value)"
 								type="button"
 								class="btn"
-
 							>
 								<span class="mr-1">{{ status.name }}</span>
 								<span
@@ -75,34 +80,39 @@ const appointmentStatus = ref([]);
 									<tr>
 										<th scope="col">#</th>
 										<th scope="col">Client Name</th>
-										<th scope="col">Date</th>
-										<th scope="col">Time</th>
+										<th scope="col">Start Date</th>
+										<th scope="col">End Date</th>
 										<th scope="col">Status</th>
 										<th scope="col">Options</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<td></td>
+									<tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
+										<td>{{ index + 1 }}</td>
+                                        <td>{{ appointment.client.first_name }} {{ appointment.client.last_name }}</td>
+                                        <td>{{ appointment.start_time }}</td>
+                                        <td>{{ appointment.end_time }}</td>
 										<td>
-
+											<span class="badge" :class="`badge-${appointment.status.color}`">{{
+                                                appointment.status.name }}</span>
 										</td>
-										<td></td>
-										<td></td>
 										<td>
-											<span
-												class="badge"
-												></span
+											<a>
+												<i class="fa fa-edit mr-2"></i>
+											</a>
+
+											<a
+												href="#"
+												@click.prevent="
+													deleteAppointment(
+														appointment.id
+													)
+												"
 											>
-										</td>
-										<td>
-                                            <a>
-                                                <i class="fa fa-edit mr-2"></i>
-                                            </a>
-
-                                            <a href="#" @click.prevent="deleteAppointment(appointment.id)">
-                                                <i class="fa fa-trash text-danger"></i>
-                                            </a>
+												<i
+													class="fa fa-trash text-danger"
+												></i>
+											</a>
 										</td>
 									</tr>
 								</tbody>
