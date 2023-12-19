@@ -18,6 +18,7 @@ Route::get('csrf', function () {
 
 Route::get('/api/users', [UserController::class, 'index']);
 Route::post('/api/users', [UserController::class, 'store']);
+Route::get('/api/users/search', [UserController::class, 'search']);
 Route::put('/api/users/{user}', [UserController::class, 'update']);
 Route::patch('/api/users/{user}/change-role', [UserController::class, 'changeRole']);
 Route::delete('/api/users/{user}', [UserController::class, 'destory']);

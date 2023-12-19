@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useToastr } from "../../toastr";
+import { debounce } from 'lodash';
 
 import UsersListItem from "./UsersListItem.vue";
 
@@ -101,6 +102,22 @@ const deleteUser = () => {
     });
 };
 
+const search = () => {
+    axios.get('/api/users/search', {
+        params: {
+            query: searchQuery.value
+        }
+    }).then(res => {
+        users.value = res.data
+    }).catch(error => {
+        console.log(error)
+    });
+};
+
+watch(searchQuery, debounce(() => {
+    search()
+}, 300));
+
 const getUsers = () => {
 	axios.get("/api/users").then((res) => {
 		users.value = res.data;
@@ -151,12 +168,7 @@ onMounted(() => {
 					</div>
 				</div>
 				<div>
-					<input
-						type="text"
-						v-model="searchQuery"
-						class="form-control"
-						placeholder="Search..."
-					/>
+					<input type="text" v-model="searchQuery" class="form-control" placeholder="Search..." />
 				</div>
 			</div>
 			<div class="card">
