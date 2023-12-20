@@ -14,13 +14,18 @@ class Appointment extends Model
 
     protected $guarded = [];
 
+    protected $appends = ['formatted_start_time', 'formatted_end_time'];
+
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'status' => AppointmentStatus::class,
     ];
 
-    protected $appends = ['formatted_start_time', 'formatted_end_time'];
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
 
     public function formattedStartTime(): Attribute
     {
@@ -34,10 +39,5 @@ class Appointment extends Model
         return Attribute::make(
             get: fn () => $this->end_time->format('Y-m-d h:i A'),
         );
-    }
-
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(Client::class);
     }
 }
