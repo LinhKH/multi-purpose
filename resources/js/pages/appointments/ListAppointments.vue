@@ -1,21 +1,36 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import Swal from "sweetalert2";
 
+const selectedStatus = ref();
 const appointmentStatus = ref([]);
-
-const appointments = ref([]);
-const getAppointments = () => {
-
-	axios
-		.get("/api/appointments")
-		.then((response) => {
-			appointments.value = response.data;
-		});
+const getAppointmentStatus = () => {
+	axios.get("/api/appointment-status").then((response) => {
+		appointmentStatus.value = response.data;
+	});
 };
-onMounted(() => {
-    getAppointments();
+
+const appointmentsCount = computed(() => {
+	return appointmentStatus.value
+		.map((status) => status.count)
+		.reduce((acc, value) => acc + value, 0);
 });
 
+const appointments = ref([]);
+const getAppointments = (status) => {
+	selectedStatus.value = status;
+	const params = {};
+	if (status) {
+		params.status = status;
+	}
+	axios.get("/api/appointments", { params }).then((response) => {
+		appointments.value = response.data;
+	});
+};
+onMounted(() => {
+	getAppointments();
+	getAppointmentStatus();
+});
 </script>
 
 <template>
@@ -50,11 +65,17 @@ onMounted(() => {
 							<button
 								@click="getAppointments()"
 								type="button"
-								class="btn btn-secondary"
-
+								class="btn"
+								:class="[
+									typeof selectedStatus === 'undefined'
+										? 'btn-secondary'
+										: 'btn-default',
+								]"
 							>
 								<span class="mr-1">All</span>
-								<span class="badge badge-pill badge-info">appointmentsCount</span>
+								<span class="badge badge-pill badge-info">{{
+									appointmentsCount
+								}}</span>
 							</button>
 
 							<button
@@ -63,6 +84,11 @@ onMounted(() => {
 								@click="getAppointments(status.value)"
 								type="button"
 								class="btn"
+								:class="[
+									selectedStatus === status.value
+										? 'btn-secondary'
+										: 'btn-default',
+								]"
 							>
 								<span class="mr-1">{{ status.name }}</span>
 								<span
@@ -87,14 +113,27 @@ onMounted(() => {
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
+									<tr
+										v-for="(
+											appointment, index
+										) in appointments.data"
+										:key="appointment.id"
+									>
 										<td>{{ index + 1 }}</td>
-                                        <td>{{ appointment.client.first_name }} {{ appointment.client.last_name }}</td>
-                                        <td>{{ appointment.start_time }}</td>
-                                        <td>{{ appointment.end_time }}</td>
 										<td>
-											<span class="badge" :class="`badge-${appointment.status.color}`">{{
-                                                appointment.status.name }}</span>
+											{{ appointment.client.first_name }}
+											{{ appointment.client.last_name }}
+										</td>
+										<td>{{ appointment.start_time }}</td>
+										<td>{{ appointment.end_time }}</td>
+										<td>
+											<span
+												class="badge"
+												:class="`badge-${appointment.status.color}`"
+												>{{
+													appointment.status.name
+												}}</span
+											>
 										</td>
 										<td>
 											<a>
