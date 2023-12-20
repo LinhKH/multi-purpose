@@ -14,6 +14,7 @@
 
     {{-- <link rel="stylesheet" href="dist/css/adminlte.min.css?v=3.2.0"> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/png" sizes="16x16" href="https://public-files.gumroad.com/7cgkhx8y9f72akfe4iikrqhwkdxs">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -22,19 +23,13 @@
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
 
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <li class="nav-item" id="toggleMenuIcon">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
                             class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
-                </li>
             </ul>
 
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav">
 
                 <li class="nav-item">
                     <a class="nav-link" data-widget="navbar-search" href="#" role="button">
@@ -160,9 +155,7 @@
             </ul>
         </nav>
 
-
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-
             <a href="index3.html" class="brand-link">
                 <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="AdminLTE Logo"
                     class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -240,14 +233,13 @@
             </div>
         </aside>
 
-
         <footer class="main-footer">
 
             <div class="float-right d-none d-sm-inline">
                 Anything you want
             </div>
 
-            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
+            <strong>Copyright &copy; {{date('Y')}} <a href="http://128.199.85.33/about" target="_blank">Linh Kiều</a>.</strong> All rights
             reserved.
         </footer>
     </div>
@@ -259,6 +251,25 @@
     {{-- <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <script src="dist/js/adminlte.min.js?v=3.2.0"></script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleMenuIcon = document.getElementById('toggleMenuIcon');
+            const body = document.querySelector('body');
+
+            toggleMenuIcon.addEventListener('click', () => {
+                if (body.classList.contains('sidebar-collapse')) {
+                    localStorage.setItem('sidebarState', 'expanded');
+                } else {
+                    localStorage.setItem('sidebarState', 'collapsed');
+                }
+            });
+
+            const sidebarState = localStorage.getItem('sidebarState');
+            if (sidebarState === 'collapsed') {
+                body.classList.add('sidebar-collapse');
+            }
+        });
+    </script>
 </body>
 
 </html>
