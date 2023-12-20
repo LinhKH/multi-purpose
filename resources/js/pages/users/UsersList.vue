@@ -244,7 +244,7 @@ onMounted(() => {
 						</table>
 					</div>
 				</div>
-                <Bootstrap4Pagination :data="users" @pagination-change-page="getUsers" />
+                <Bootstrap4Pagination :data="users" @pagination-change-page="getUsers" class="ml-2"/>
 			</div>
 		</div>
 	</div>
