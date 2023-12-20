@@ -102,20 +102,8 @@ const deleteUser = () => {
     });
 };
 
-const search = () => {
-    axios.get('/api/users/search', {
-        params: {
-            query: searchQuery.value
-        }
-    }).then(res => {
-        users.value = res.data
-    }).catch(error => {
-        console.log(error)
-    });
-};
-
 watch(searchQuery, debounce(() => {
-    search()
+    getUsers()
 }, 300));
 
 const selectedUsers = ref([]);
@@ -153,12 +141,17 @@ const bulkDelete = () => {
 };
 
 const getUsers = (page = 1) => {
-    selectedUsers.value= [];
-    selectAll.value = false;
-	axios.get(`/api/users?page=${page}`).then((res) => {
-		users.value = res.data;
-	});
-};
+    axios.get(`/api/users?page=${page}`, {
+        params: {
+            query: searchQuery.value
+        }
+    })
+    .then((response) => {
+        users.value = response.data;
+        selectedUsers.value = [];
+        selectAll.value = false;
+    })
+}
 
 onMounted(() => {
 	getUsers();
