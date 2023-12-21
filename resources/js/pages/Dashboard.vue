@@ -1,15 +1,23 @@
 <template>
     <div class="container">
         <h2>Dashboard: </h2>
-        <button type="button" class="btn btn-dark mt-2" @click="logout">Logout</button>
+        <Dynamicform />
+
+
+
+        <!-- <button type="button" class="btn btn-dark mt-2" @click="logout">Logout</button> -->
     </div>
 </template>
 <script setup>
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
+// import store from '../store';
 
-const router = useRouter();
-const logout = () => {
-    localStorage.removeItem('token');
-    router.push({name: 'Home'});
-};
+import Dynamicform  from '../components/Dynamicform.vue';
+
+// const router = useRouter();
+
+// const logout = () => {
+//     store.dispatch('removeToken')
+//     router.push({name: 'Home'});
+// };
 </script>

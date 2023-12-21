@@ -57,15 +57,18 @@
 
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
+const store = useStore();
 const router = useRouter();
+
 const errors = ref([]);
 const form = reactive({});
 
 const register = async () => {
     await axios.post('/api/register', form).then(res => {
         if (res.data.success) {
-            localStorage.setItem('token', res.data.data.token);
+            store.dispatch('setToken', res.data.data.token);
             router.push({name: 'Dashboard'});
         }
     }).catch(error => {
