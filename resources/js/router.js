@@ -3,6 +3,7 @@ import Login from './pages/Login.vue';
 import Home from './pages/Home.vue';
 import Register from './pages/Register.vue';
 import Dashboard from './pages/Dashboard.vue';
+import { useUserStore } from "./store/userStore";
 
 const routes = [
     {
@@ -25,7 +26,7 @@ const routes = [
         name: 'Dashboard',
         component: Dashboard,
         meta: {
-            requireAuth : true
+            requireAuth: true
         }
     },
 ];
@@ -35,11 +36,12 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to,from) => {
-    if (to.meta.requireAuth && !localStorage.getItem('token')) {
+router.beforeEach((to, from) => {
+    const store = useUserStore()
+    if (to.meta.requireAuth && !store.token) {
         return { name: 'Login' };
     }
-    if (!to.meta.requireAuth && localStorage.getItem('token')) {
+    if (!to.meta.requireAuth && store.token) {
         return { name: 'Dashboard' };
     }
 })
